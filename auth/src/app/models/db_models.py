@@ -1,8 +1,9 @@
 import uuid
 from datetime import datetime
 
-from app.core import db
 from sqlalchemy.dialects.postgresql import UUID
+
+from app.core import db
 
 
 class User(db.Model):
@@ -19,7 +20,7 @@ class User(db.Model):
     middle_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
 
-    history_entries = db.relationship('LoginHistory', backref='user')
+    history_entries = db.relationship('LoginHistory', backref='user', order_by="desc(LoginHistory.created_at)")
     roles = db.relationship(
         'Role', secondary='users_roles',
         backref=db.backref('users', lazy='dynamic')

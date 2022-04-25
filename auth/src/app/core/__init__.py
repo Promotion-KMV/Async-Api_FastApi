@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 
@@ -12,3 +13,5 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 
 swagger = Swagger(app, config=swagger_config)
+
+jwt = JWTManager(app)

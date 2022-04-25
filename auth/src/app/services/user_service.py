@@ -57,9 +57,9 @@ class UserService:
             raise FieldValidationError(message=e.__repr__())
 
     @staticmethod
-    def try_get_from_db(id_):
+    def get_user_from_db(**kwargs):
         try:
-            user = DBUserModel.query.filter_by(id=id_).first()
+            user = DBUserModel.query.filter_by(**kwargs).first()
         except DataError:
             raise BadIdFormat
 
@@ -68,7 +68,13 @@ class UserService:
 
         return user
 
+    @staticmethod
+    def try_get_from_db(id_):
+        return UserService.get_user_from_db(id=id_)
 
+    @staticmethod
+    def get_user_by_login(login: str) -> DBUserModel:
+        user = UserService.get_user_from_db(login=login)
+        UserServiceModel(**user.__dict__)
 
-
-
+        return user

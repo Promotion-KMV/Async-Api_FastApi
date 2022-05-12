@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import BaseSettings, Field
 
@@ -28,8 +28,14 @@ class Config:
         f"postgresql://auth_app:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/auth_database"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    RATE_LIMIT = int(os.getenv("RPM_LIMIT", 10))
+    RATE_LIMIT = int(os.getenv("RPM_LIMIT", 20))
     RATE_LIMIT_SESSION_LEN = int(os.getenv("RATE_LIMIT_SESSION_LEN", 60*60))
+
+
+class RedisConfig(BaseSettings):
+    host: str = Field("localhost", env="REDIS_HOST")
+    port: int = Field(6739, env="REDIS_PORT")
+    password: Optional[str] = Field(env="REDIS_PASSWORD")
 
 
 class TracingConfig(BaseSettings):
@@ -37,6 +43,7 @@ class TracingConfig(BaseSettings):
     agent_port: int = Field(6831, env='TRACING_AGENT_PORT')
     host: str = Field("tracing", env='TRACING_HOST')
     log: bool = Field(False, env='LOG_TRACING')
+    enable: bool = Field(True, env='ENABLE_TRACING')
 
 
 class BaseOauthConfig(BaseSettings):
@@ -52,7 +59,7 @@ class VKOathConfig(BaseOauthConfig):
     redirect_url: str = "http://localhost/auth/api/v1/oauth/vk/login"
     api_url: str = "https://api.vk.com/method/"
     api_version: str = "5.131"
-    client_id: int = 8158992
+    client_id: int = Field(8158992, env="VK_CLIENT_ID")
 
 
 class YandexOathConfig(BaseOauthConfig):
@@ -61,4 +68,6 @@ class YandexOathConfig(BaseOauthConfig):
     auth_url: str = YANDEX_BASE_URL + "/authorize"
     get_token_url: str = YANDEX_BASE_URL + "/token"
     redirect_url: str = "http://localhost/auth/api/v1/oauth/yandex/login"
-    client_id: str = "1663a587e0a44f68a19f1578934144ad"
+    client_id: str = Field(
+        "1663a587e0a44f68a19f1578934144ad", env="YANDEX_CLIENT_ID"
+    )

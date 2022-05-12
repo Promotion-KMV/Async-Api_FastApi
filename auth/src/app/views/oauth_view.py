@@ -37,13 +37,13 @@ class VKOauthView(MethodView):
         vk_url_params = urlencode(params)
         url = f"{vk_oauth_config.auth_url}?{vk_url_params}"
 
-        return {"url": url}, 200
+        return {"url": url}, HTTPStatus.OK
 
 
 class YandexOauthView(MethodView):
     @swag_from(
-        f"{SWAGGER_DOCS_PATH}/oauth/vk.yaml",
-        endpoint="oauth.vk_auth",
+        f"{SWAGGER_DOCS_PATH}/oauth/yandex.yaml",
+        endpoint="oauth.yandex_auth",
         methods=["GET"]
     )
     @catch_exceptions
@@ -57,7 +57,7 @@ class YandexOauthView(MethodView):
         url_params = urlencode(params)
         url = f"{yandex_oauth_config.auth_url}?{url_params}"
 
-        return {"url": url}, 200
+        return {"url": url}, HTTPStatus.OK
 
 
 class OauthLoginView(MethodView):

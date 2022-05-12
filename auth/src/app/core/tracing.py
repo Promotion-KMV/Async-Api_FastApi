@@ -39,5 +39,5 @@ def configure_tracer() -> None:
 @tracing_blueprint.before_request
 def before_request():
     request_id = request.headers.get('X-Request-Id')
-    if not request_id:
-        raise RuntimeError('request id is required') 
+    if (not request_id) and trace_settings.enable:
+        raise RuntimeError('request id is required')

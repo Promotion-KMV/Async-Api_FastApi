@@ -1,0 +1,6 @@
+tags:
+  - oauth
+summary: Метод для oauth через Yandex
+responses:
+  200:
+    description: Пользователь авторизирован

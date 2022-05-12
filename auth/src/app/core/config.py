@@ -28,7 +28,7 @@ class Config:
         f"postgresql://auth_app:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/auth_database"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    RATE_LIMIT = int(os.getenv("RPM_LIMIT", 10))
+    RATE_LIMIT = int(os.getenv("RPM_LIMIT", 30))
     RATE_LIMIT_SESSION_LEN = int(os.getenv("RATE_LIMIT_SESSION_LEN", 60*60))
 
 

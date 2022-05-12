@@ -8,8 +8,7 @@ from pydantic import BaseModel
 from app.core.config import Config
 from app.db.redis import redis_rate_limits
 from app.utils.exceptions import RequestLimitReached
-from app.services.auth_services.jwt_service import JWT_SERVICE
-from app.utils.exceptions import InvalidToken
+from app.utils.logger import logger
 
 
 config = Config()
@@ -42,7 +41,7 @@ class TokenBucket:
         token_info = self._get_from_storage(key)
         if token_info is None:
             token_info = self._create_session(key)
-            
+        logger.info(logger)
         if token_info.tokens < 1:
             has_tokens = self._check_and_refill(key)
             if has_tokens < 1:
@@ -80,22 +79,16 @@ class TokenBucket:
 token_bucket = TokenBucket(rpm=config.RATE_LIMIT)
 
 
-def check_rate_limit(user_id):
+def check_rate_limit(key: str):
 
-    if not token_bucket.pop_token(key=str(user_id)):
+    if not token_bucket.pop_token(key=key):
         raise RequestLimitReached
 
 
 def limit_rate(func):
     def wrapper(*args, **kwargs):
-        access_token = request.headers.get("Authorization")
-        if not access_token:
-            return func(*args, **kwargs)
-        try:
-            payload = JWT_SERVICE.get_access_payload(access_token)
-            check_rate_limit(user_id=payload.user_id)
-        except InvalidToken:
-            pass
+        ip_address = request.remote_addr
+        check_rate_limit(key=ip_address)
         return func(*args, **kwargs)
     return wrapper
 
